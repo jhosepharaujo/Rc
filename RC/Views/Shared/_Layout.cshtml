@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/bootstrap")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map_canvas {
+            height: 100%;
+        }
+    </style>
+    <script type="text/javascript"
+        src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDDpb3pgQKSqpvrj5Bfbu4WnGbJV6_wNX8&sensor=true">
+    </script>
+    <script type="text/javascript">
+        function initialize() {
+            carregaMapaCad();
+        }
+
+        function carregaMapaCad() {
+            var myLatlng = new google.maps.LatLng(-5.3811357, -49.1331024);
+
+            var mapOptions = {
+                center: myLatlng,
+                zoom: 13,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("map_canvas"),
+                mapOptions);
+
+            var marker = new google.maps.Marker({
+                position: myLatlng,
+                map: map,
+                title: "Local do Incidente",
+                draggable: true
+            });
+
+            atualizaLatLng(marker);
+
+            google.maps.event.addListener(marker, 'dragend', function () {
+                atualizaLatLng(marker);
+            });
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+        function atualizaLatLng(marker) {
+            $("#Lat").val(marker.getPosition().lat());
+            $("#Lng").val(marker.getPosition().lng());
+        }
+
+    </script>
+
+
+
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            @if (TempData["msg"] != null)
+            {
+                <div id="msg" class="alert alert-info">
+                    <a class="close" data-dismiss="alert" href="#">&times;</a>
+                    @TempData["msg"]
+                </div>
+            }
+
+            @{
+                RC.Infra.RCAlert alert = null;
+                if (TempData["Alert"] != null)
+                {
+                    if (TempData["Alert"] is RC.Infra.RCAlert)
+                    {
+                        alert = TempData["Alert"] as RC.Infra.RCAlert;
+                    }
+                }
+            }
+
+            @if (alert != null)
+            {
+                <div id="alerta" class="alert @alert.HTMLClass">
+                    <a class="close" data-dismiss="alert" href="#">&times;</a>
+                    <p>
+                        @alert.Message <a href="@alert.UrlHelp">@alert.UrlName</a>
+                    </p>
+                </div>
+            }
+        </div>
+        @RenderBody()
+    </div>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

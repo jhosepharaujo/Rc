@@ -1,0 +1,40 @@
+﻿@model IQueryable<RC.Models.Incidente>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<div id="map_index" style="width: 600px; height: 500px;"></div>
+
+<script>
+    $(document).ready(function () {
+
+        function initialize() {
+            var myLatlng = new google.maps.LatLng(-5.3399462408126075, -49.0898437330078);
+
+            var mapOptions = {
+                center: myLatlng,
+                zoom: 12,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("map_index"),
+                mapOptions);
+            @foreach (var item in Model)
+            {
+                <text>
+                    var myLatlng = new google.maps.LatLng(@item.Lat, @item.Lng);
+                    var marker = new google.maps.Marker({
+                        position: myLatlng,
+                        map: map,
+                        title: "@item.Descricao"
+                    });
+                </text>
+            }
+        }
+
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+    });
+</script>
